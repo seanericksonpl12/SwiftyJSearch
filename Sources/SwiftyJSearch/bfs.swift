@@ -37,12 +37,15 @@ public extension JSON {
     
     /// Breadth First Search of a JSON object to find values for specific keys
     ///
+    /// - Warning: When returning with .all JSON array values are unordered and may not represent the order in which the keys are found
+    ///
     /// - Parameters:
     ///    - keys: The keys to search for
-    ///    - excluding: optional keys to exclude in the search to improve performance
+    ///    - excluding: Optional keys to exclude in the search to improve performance
+    ///    - returning: Which matches to return - all of them, first, or last
     ///    - maxDepth: The maximum depth of traversal during the search
     ///
-    /// - Returns: A string to JSON dictionary of each found key matching to its corresponding JSON value
+    /// - Returns: A string to JSON array dictionary of each found key matching to its corresponding array of JSON values
     func bfs(for keys: [String],
                     excluding: [String] = [],
                     returning: SearchOptions = .first,
@@ -52,12 +55,15 @@ public extension JSON {
     
     /// Breadth First Search of a JSON object to find values for  a specific key
     ///
+    /// - Warning: When returning with .all returned array is unordered and may not represent the order in which the keys are found
+    ///
     /// - Parameters:
     ///    - key: The key to search for
-    ///    - excluding: optional keys to exclude in the search to improve performance
+    ///    - excluding: Optional keys to exclude in the search to improve performance
+    ///    - returning: Which matches to return - all of them, first, or last
     ///    - maxDepth: The maximum depth of traversal during the search
     ///
-    /// - Returns: The JSON value of the found key, or nil if the key is not found
+    /// - Returns: Array of the JSON values of the found key, or an empty array if the key is not found
     func bfs(for key: String,
                     excluding: [String] = [],
                     returning: SearchOptions = .all,
@@ -77,11 +83,7 @@ public extension JSON {
         queue.append(self)
         while(!queue.isEmpty) {
             if let max = maxDepth, depth > max { break }
-            if returning == .first && keys.count <= rtrnDict.values.count {
-                print("rtrn dict: \(rtrnDict)")
-                print("rtrn dict count: \(rtrnDict.count)")
-                break
-            }
+            if returning == .first && keys.count <= rtrnDict.values.count { break }
             let cur = queue.remove(at: 0)
             let arr = cur.arrayValue
             let dict = cur.dictionaryValue
@@ -90,17 +92,19 @@ public extension JSON {
                 queue.append(contentsOf: arr)
             }
             else if !dict.isEmpty {
-                keys.forEach {
-                    if let val = dict[$0], rtrnDict[$0] == nil {
-                        rtrnDict[$0] = [val]
-                    } else if let val = dict[$0], rtrnDict[$0] != nil {
+                for i in keys {
+                    if let val = dict[i], rtrnDict[i] == nil {
+                        rtrnDict[i] = [val]
+                    } else if let val = dict[i], rtrnDict[i] != nil {
                         switch returning {
                         case .all:
-                            rtrnDict[$0]?.append(val)
+                            rtrnDict[i]?.append(val)
                         case .first:
-                            break
+                            if keys.count <= rtrnDict.values.count {
+                                return rtrnDict
+                            }
                         case .last:
-                            rtrnDict[$0] = [val]
+                            rtrnDict[i] = [val]
                         }
                     }
                 }

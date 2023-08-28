@@ -20,6 +20,8 @@ let package = Package(
             path: "Sources"),
         .testTarget(
             name: "SwiftyJSearchTests",
-            dependencies: ["SwiftyJSearch"]),
+            dependencies: ["SwiftyJSearch"],
+            path: "Tests",
+            resources: [.copy("SwiftyJSearchTests/JSON/Test1")])
     ]
 )
