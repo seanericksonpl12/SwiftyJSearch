@@ -1,0 +1,70 @@
+[
+ {
+    "id": "Test1",
+    "firstContents" : {
+        "testTypes" : {
+            "cars" : [
+            {
+                "car types" : [
+                {
+                    "brand" : "Chevy",
+                    "gasoline" : true,
+                    "models": [
+                        "Camaro",
+                        "Corvette",
+                        "Silverado",
+                        "Suburban"
+                    ]
+                },
+                {
+                    "brand" : "Ford",
+                    "gasoline" : true,
+                    "models": [
+                        "GT",
+                        "F150",
+                        "Bronco",
+                        "Mustang"
+                    ]
+                },
+                {
+                    "brand" : "Tesla",
+                    "gasoline" : false,
+                    "models": [
+                        "Model 3",
+                        "Model Y",
+                        "Cybertruck",
+                        "Model S"
+                    ]
+                }
+                ]
+                }
+            ]
+        }
+    },
+    "secondContents" : [
+        {
+            "guitars" : [
+                {
+                    "brand" : "Fender",
+                    "models" : [
+                        "Stratocaster",
+                        "Jazzmaster",
+                        "Telecaster",
+                        "Jaguar"
+                    ]
+                },
+                {
+                    "brand" : "Gibson",
+                    "models" : [
+                        "Les Paul",
+                        "SG",
+                        "Flying V",
+                        "Firebird"
+                    ]
+                }
+            ]
+        }
+    ]
+ }
+]
+
