@@ -48,7 +48,7 @@ public extension JSON {
     /// - Returns: A string to JSON array dictionary of each found key matching to its corresponding array of JSON values
     func bfs(for keys: [String],
                     excluding: [String] = [],
-                    returning: SearchOptions = .first,
+                    returning: SearchOptions = .all,
                     maxDepth: Int? = nil) -> [String : [JSON]] {
         self.bfs(keys: keys, excluding: excluding, returning: returning, maxDepth: maxDepth)
     }

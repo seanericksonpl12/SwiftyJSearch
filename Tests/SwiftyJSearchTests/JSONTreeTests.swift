@@ -32,7 +32,8 @@ final class JSONTreeTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         guard let json = try? JSON(data: self.testData) else { XCTFail(); return; }
-        let tree = JSONTree(json: json)
-        print(tree.prettyFormat)
+        print(json.treeFormat)
+        //let tree = JSONTree(json: json)
+        //print(tree.prettyFormat)
     }
 }
