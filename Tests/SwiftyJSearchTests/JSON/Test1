@@ -62,6 +62,14 @@
                         "Firebird"
                     ]
                 }
+            ],
+            "other things" : [
+                {
+                    "null value" : null
+                },
+                {
+                    "number" : 2323.12
+                }
             ]
         }
     ]

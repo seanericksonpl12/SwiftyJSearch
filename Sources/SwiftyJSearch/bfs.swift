@@ -37,7 +37,7 @@ public extension JSON {
     
     /// Breadth First Search of a JSON object to find values for specific keys
     ///
-    /// - Warning: When returning with .all JSON array values are unordered and may not represent the order in which the keys are found
+    /// - Warning: JSON Dictionaries are unordered, using .first or .last may result in different values each function call if the found values are nested at the same depth
     ///
     /// - Parameters:
     ///    - keys: The keys to search for
@@ -55,7 +55,7 @@ public extension JSON {
     
     /// Breadth First Search of a JSON object to find values for  a specific key
     ///
-    /// - Warning: When returning with .all returned array is unordered and may not represent the order in which the keys are found
+    /// - Warning: JSON Dictionaries are unordered, using .first or .last may result in different values each function call if the found values are nested at the same depth
     ///
     /// - Parameters:
     ///    - key: The key to search for

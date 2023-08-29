@@ -3,7 +3,7 @@ import SwiftyJSON
 @testable import SwiftyJSearch
 
 @available(macOS 13.0, *)
-final class SwiftyJSearchTests: XCTestCase {
+final class BFSTests: XCTestCase {
     
     var testData: Data!
     
