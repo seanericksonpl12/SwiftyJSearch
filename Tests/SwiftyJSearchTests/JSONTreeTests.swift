@@ -24,15 +24,55 @@ final class JSONTreeTests: XCTestCase {
         self.testData = data
     }
     
+    func testEmptyInit() {
+        let tree = JSONTree()
+        XCTAssertTrue(tree.root.children.isEmpty)
+    }
+    
+    func testRootInit() {
+        let root = JSONTree.Node(children: [], content: .string("root"))
+        let tree = JSONTree(root: root)
+        XCTAssertEqual(tree.root, root)
+    }
+    
+    func testJSONInit() {
+        
+    }
     
     func testContains() {
         guard let json = try? JSON(data: self.testData) else { XCTFail(); return; }
         let tree = JSONTree(json: json)
-        print(tree.prettyFormat)
         XCTAssertTrue(tree.contains("Camaro"))
         XCTAssertTrue(tree.contains(true))
         XCTAssertTrue(tree.contains(2323.12))
         XCTAssertFalse(tree.contains("Hellcat"))
         XCTAssertFalse(tree.contains(3234.21))
+    }
+    
+    func testSearch() {
+        let root = JSONTree.Node(children: [], content: .string("root"))
+        let tree = JSONTree(root: root)
+        let node1 = JSONTree.Node(children: [], content: .bool(true))
+        let node2 = JSONTree.Node(children: [], content: .string("test"))
+        let node3 = JSONTree.Node(children: [], content: .number(25))
+        let node4 = JSONTree.Node(children: [], content: .null(NSNull()))
+        let node5 = JSONTree.Node(children: [], content: .string("test child"))
+        
+        root.children.append(node1)
+        root.children.append(node2)
+        node1.children.append(node3)
+        node1.children.append(node4)
+        node2.children.append(node5)
+        
+        XCTAssertEqual(tree.search(for: "test")?.children, [node5])
+        XCTAssertEqual(tree.search(for: 25), node3)
+    }
+    
+    func testCount() {
+        guard let json = try? JSON(data: self.testData) else { XCTFail(); return; }
+        let tree = JSONTree(json: json)
+        print(tree.count())
+        print(tree.contentNodeCount())
+        print(tree.prettyFormat)
     }
 }

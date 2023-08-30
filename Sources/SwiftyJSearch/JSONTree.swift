@@ -31,13 +31,25 @@ public struct JSONTree {
     private(set) var root: Node
     private var _balanceFactor: Float
     
+    /// Initializes a tree with an empty root node
+    init() {
+        self.root = Node(children: [], content: .null(NSNull()))
+        self._balanceFactor = 0.0
+    }
+    
     /// Initializes an empty tree with the given root node
+    ///
+    /// - Parameter root: A JSONTree node to use as the root of the tree
     init(root: Node) {
         self.root = root
         self._balanceFactor = 0.0
     }
     
-    /// Initializes a tree with the given JSON data
+    /// Initializes a tree from the given JSON data
+    ///
+    /// - Note: Dictionaries may be reordered to balance the Tree as JSON dictionaries are unordered.
+    ///
+    /// - Parameter json: A SwiftyJSON JSON Object
     init(json: JSON) {
         self.root = Node(children: [], content: .string("Root"))
         self._balanceFactor = 0.0
@@ -50,7 +62,13 @@ public struct JSONTree {
 // MARK: - Tree Node
 public extension JSONTree {
     
-    class Node {
+    class Node: Equatable {
+        
+        var children: [Node]
+        var content: ContentType
+        var isDictionary: Bool
+        
+        private var id: UUID = UUID()
         
         init(children: [Node], content: ContentType, isDictionary: Bool = false) {
             self.children = children
@@ -58,9 +76,9 @@ public extension JSONTree {
             self.isDictionary = isDictionary
         }
         
-        var children: [Node]
-        var content: ContentType
-        var isDictionary: Bool
+        public static func ==(lhs: Node, rhs: Node) -> Bool {
+            return lhs.id == rhs.id
+        }
     }
     
     enum ContentType {
@@ -192,9 +210,39 @@ extension JSONTree {
 
 
 // MARK: - Search
-extension JSONTree {
+public extension JSONTree {
     
-    public func search(for value: ContentType) -> Node? {
+    /// Search for a node with the given value as content
+    ///
+    /// - Parameter value: The String value to search for
+    /// - Returns: The node if found, else nil
+    func search(for value: String) -> Node? { self.search(for: .string(value)) }
+    
+    /// Search for a node with the given value as content
+    ///
+    /// - Parameter value: The Bool value to search for
+    /// - Returns: The node if found, else nil
+    func search(for value: Bool) -> Node? { self.search(for: .bool(value)) }
+    
+    /// Search for a node with the given value as content
+    ///
+    /// - Parameter value: The Int value to search for
+    /// - Returns: The node if found, else nil
+    func search(for value: Int) -> Node? { self.search(for: .number(value as NSNumber)) }
+    
+    /// Search for a node with the given value as content
+    ///
+    /// - Parameter value: The Float value to search for
+    /// - Returns: The node if found, else nil
+    func search(for value: Float) -> Node? { self.search(for: .number(value as NSNumber)) }
+    
+    /// Search for a node with the given value as content
+    ///
+    /// - Parameter value: The Double value to search for
+    /// - Returns: The node if found, else nil
+    func search(for value: Double) -> Node? { self.search(for: .number(value as NSNumber)) }
+    
+    private func search(for value: ContentType) -> Node? {
         let root: Node = self.root
         var queue: [Node] = [root]
         while(!queue.isEmpty) {
@@ -222,35 +270,30 @@ public extension JSONTree {
     /// Check if a String value is contained in a node of the Tree
     ///
     /// - Parameter value: The String value possibly contained in the tree
-    ///
     /// - Returns: True if the Tree contains the value, else false
     func contains(_ value: String) -> Bool { self.contains(.string(value)) }
     
     /// Check if a Bool value is contained in a node of the Tree
     ///
     /// - Parameter value: The Bool value possibly contained in the tree
-    ///
     /// - Returns: True if the Tree contains the value, else false
     func contains(_ value: Bool) -> Bool { self.contains(.bool(value)) }
     
     /// Check if a Number value is contained in a node of the Tree
     ///
     /// - Parameter value: The Number value possibly contained in the tree
-    ///
     /// - Returns: True if the Tree contains the value, else false
     func contains(_ value: Int) -> Bool { self.contains(.number(value as NSNumber)) }
     
     /// Check if a Number value is contained in a node of the Tree
     ///
     /// - Parameter value: The Number value possibly contained in the tree
-    ///
     /// - Returns: True if the Tree contains the value, else false
     func contains(_ value: Float) -> Bool { self.contains(.number(value as NSNumber)) }
     
     /// Check if a Number value is contained in a node of the Tree
     ///
     /// - Parameter value: The Number value possibly contained in the tree
-    ///
     /// - Returns: True if the Tree contains the value, else false
     func contains(_ value: Double) -> Bool { self.contains(.number(value as NSNumber)) }
     
@@ -274,7 +317,7 @@ extension JSONTree {
                 children = new
             } else { break }
         }
-        if root.children.count % 2 == 0 {
+        if children.count % 2 == 0 {
             leftCount = _sumNodes(Array(children[0..<(children.count / 2)]))
         } else {
             leftCount = _sumNodes(Array(children[0...(children.count / 2)]))
@@ -282,9 +325,6 @@ extension JSONTree {
         rightCount = _sumNodes(Array(children[(children.count / 2)..<children.count]))
         
         self._balanceFactor = Float(leftCount) / Float(rightCount)
-        print("left sum: \(leftCount)")
-        print("right sum: \(rightCount)")
-        print(self._balanceFactor)
     }
     
     private func _sumNodes(_ nodes: [Node]) -> Int {
@@ -294,9 +334,35 @@ extension JSONTree {
         nodes.forEach { sum += _sumNodes($0.children) }
         return sum
     }
+}
+
+
+// MARK: - Count
+extension JSONTree {
     
-    private mutating func rebalanceTree() {
-        
+    public var count: Int { self._count() }
+    public var contentNodeCount: Int { self._contentNodeCount() }
+    
+    private func _count() -> Int {
+        var count = 1
+        var queue = [self.root]
+        while(!queue.isEmpty) {
+            let next = queue.remove(at: 0)
+            queue.append(contentsOf: next.children)
+            count += 1
+        }
+        return count
+    }
+    
+    private func _contentNodeCount() -> Int {
+        var count = 1
+        var queue = [self.root]
+        while(!queue.isEmpty) {
+            let next = queue.remove(at: 0)
+            queue.append(contentsOf: next.children)
+            if !next.isDictionary { count += 1 }
+        }
+        return count
     }
 }
 
