@@ -62,15 +62,27 @@ public struct JSONTree {
 // MARK: - Tree Node
 public extension JSONTree {
     
+    /// JSONTree Node
     class Node: Equatable {
         
         var children: [Node]
         var content: ContentType
         var isDictionary: Bool
         
-        private var id: UUID = UUID()
+        private(set) var id: UUID = UUID()
         
-        init(children: [Node], content: ContentType, isDictionary: Bool = false) {
+        /// Creates a JSONTree Node instance with given children and content
+        /// - Parameters:
+        ///    - chilren: array of child nodes
+        ///    - content: the value the node stores
+        init(children: [Node], content: ContentType) {
+            self.children = children
+            self.content = content
+            self.isDictionary = false
+        }
+        
+        /// Internal Init with option for making the node a dictionary node
+        internal init(children: [Node], content: ContentType, isDictionary: Bool = false) {
             self.children = children
             self.content = content
             self.isDictionary = isDictionary
@@ -78,6 +90,12 @@ public extension JSONTree {
         
         public static func ==(lhs: Node, rhs: Node) -> Bool {
             return lhs.id == rhs.id
+        }
+    }
+    
+    internal class _BreakNode: Node {
+        convenience init() {
+            self.init(children: [], content: .string("BREAK_NODE"))
         }
     }
     
@@ -307,9 +325,8 @@ public extension JSONTree {
 // MARK: - Tree Balancing
 extension JSONTree {
     
-    
     /// Possibly remove? May not need
-    private mutating func checkBalance() {
+    internal mutating func checkBalance() {
         let leftCount, rightCount: Int
         var children: [Node] = self.root.children
         while(children.count == 1) {
@@ -343,7 +360,7 @@ extension JSONTree {
     public var count: Int { self._count() }
     public var contentNodeCount: Int { self._contentNodeCount() }
     
-    private func _count() -> Int {
+    internal func _count() -> Int {
         var count = 1
         var queue = [self.root]
         while(!queue.isEmpty) {
@@ -354,7 +371,7 @@ extension JSONTree {
         return count
     }
     
-    private func _contentNodeCount() -> Int {
+    internal func _contentNodeCount() -> Int {
         var count = 1
         var queue = [self.root]
         while(!queue.isEmpty) {
@@ -366,3 +383,60 @@ extension JSONTree {
     }
 }
 
+
+// MARK: - Remove
+public extension JSONTree {
+    
+    /// Private helper to remove a node from the tree
+    internal func _remove(node: Node, parent: Node) -> Bool {
+        guard let index = parent.children.firstIndex(of: node) else { return false }
+        parent.children.remove(at: index)
+        parent.children.append(contentsOf: node.children)
+        return true
+    }
+    
+    /// Remove a given node from the tree
+    ///
+    /// - Parameter node: The node to remove
+    /// - Returns: True if node was removed, else false
+    func remove(node toRemove: Node) -> Bool {
+        var queue = [self.root]
+        var possibleParent: Node?
+        while(!queue.isEmpty) {
+            let next = queue.remove(at: 0)
+            if next.children.contains(toRemove) {
+                possibleParent = next
+                break
+            }
+            queue.append(contentsOf: next.children)
+        }
+        guard let parent = possibleParent else { return false }
+        return self._remove(node: toRemove, parent: parent)
+    }
+    
+    /// Remove all nodes that satify a given predicate
+    ///
+    /// - Note: Root cannot be removed
+    /// - Parameter where: Node to Bool closure.  If a node returns true in the closure, it will be removed
+    func removeAll(where exp: (Node) throws -> Bool) rethrows {
+        var toRemove: [(Node, Node)] = []
+        var queue: [Node] = [self.root]
+        var parentQueue: [Node] = []
+        while(!queue.isEmpty) {
+            let next = queue.remove(at: 0)
+            if next is _BreakNode {
+                if !parentQueue.isEmpty { parentQueue.remove(at: 0) }
+            } else {
+                queue.append(contentsOf: next.children)
+                queue.append(_BreakNode())
+                if let check = try? exp(next), check == true {
+                    if let parent = parentQueue.first {
+                        toRemove.insert((next, parent), at: 0)
+                    }
+                }
+                parentQueue.append(next)
+            }
+        }
+        toRemove.forEach {let _ = self._remove(node: $0.0, parent: $0.1) }
+    }
+}
