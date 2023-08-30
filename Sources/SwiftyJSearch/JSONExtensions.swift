@@ -1,5 +1,5 @@
 //
-//  TreeFormatted.swift
+//  JSONExtensions.swift
 //
 //  Created by Sean Erickson on 8/29/23.
 //  Copyright (c) 2023 Sean Erickson
@@ -105,3 +105,103 @@ extension JSON {
         }
     }
 }
+
+// MARK: - BFS
+extension JSON {
+    
+    public enum SearchOptions {
+        case all
+        case first
+        case last
+    }
+}
+
+public extension JSON {
+    
+    /// Breadth First Search of a JSON object to find values for specific keys
+    ///
+    /// - Warning: JSON Dictionaries are unordered, using .first or .last may result in different values each function call if the found values are nested at the same depth
+    ///
+    /// - Parameters:
+    ///    - keys: The keys to search for
+    ///    - excluding: Optional keys to exclude in the search to improve performance
+    ///    - returning: Which matches to return - all of them, first, or last
+    ///    - maxDepth: The maximum depth of traversal during the search
+    ///
+    /// - Returns: A string to JSON array dictionary of each found key matching to its corresponding array of JSON values
+    func bfs(for keys: [String],
+                    excluding: [String] = [],
+                    returning: SearchOptions = .all,
+                    maxDepth: Int? = nil) -> [String : [JSON]] {
+        self.bfs(keys: keys, excluding: excluding, returning: returning, maxDepth: maxDepth)
+    }
+    
+    /// Breadth First Search of a JSON object to find values for  a specific key
+    ///
+    /// - Warning: JSON Dictionaries are unordered, using .first or .last may result in different values each function call if the found values are nested at the same depth
+    ///
+    /// - Parameters:
+    ///    - key: The key to search for
+    ///    - excluding: Optional keys to exclude in the search to improve performance
+    ///    - returning: Which matches to return - all of them, first, or last
+    ///    - maxDepth: The maximum depth of traversal during the search
+    ///
+    /// - Returns: Array of the JSON values of the found key, or an empty array if the key is not found
+    func bfs(for key: String,
+                    excluding: [String] = [],
+                    returning: SearchOptions = .all,
+                    maxDepth: Int? = nil) -> [JSON] {
+        self.bfs(keys: [key], excluding: excluding, returning: returning, maxDepth: maxDepth).values.first ?? []
+    }
+    
+    /// Private worker function to do the search
+    private func bfs(keys: [String],
+                         excluding: [String],
+                         returning: SearchOptions,
+                         maxDepth: Int?) -> [String : [JSON]] {
+        
+        var rtrnDict = [String: [JSON]]()
+        var queue: [JSON] = []
+        var depth = 0
+        queue.append(self)
+        while(!queue.isEmpty) {
+            if let max = maxDepth, depth > max { break }
+            if returning == .first && keys.count <= rtrnDict.values.count { break }
+            let cur = queue.remove(at: 0)
+            let arr = cur.arrayValue
+            let dict = cur.dictionaryValue
+            
+            if !arr.isEmpty {
+                queue.append(contentsOf: arr)
+            }
+            else if !dict.isEmpty {
+                for i in keys {
+                    if let val = dict[i], rtrnDict[i] == nil {
+                        rtrnDict[i] = [val]
+                    } else if let val = dict[i], rtrnDict[i] != nil {
+                        switch returning {
+                        case .all:
+                            rtrnDict[i]?.append(val)
+                        case .first:
+                            if keys.count <= rtrnDict.values.count {
+                                return rtrnDict
+                            }
+                        case .last:
+                            rtrnDict[i] = [val]
+                        }
+                    }
+                }
+                
+                dict.forEach {
+                    if !excluding.contains($0.key) {
+                        queue.append($0.value)
+                    }
+                }
+            }
+            depth += 1
+        }
+        
+        return rtrnDict
+    }
+}
+
