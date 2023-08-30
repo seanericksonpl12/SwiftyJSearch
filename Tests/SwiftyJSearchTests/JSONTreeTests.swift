@@ -16,7 +16,7 @@ final class JSONTreeTests: XCTestCase {
         super.setUp()
         continueAfterFailure = false
         let packageURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
-        let fileURL = packageURL.appendingPathComponent("JSON/Test1")
+        let fileURL = packageURL.appendingPathComponent("JSON/Test1.json")
         guard let data = try? Data(contentsOf: fileURL) else {
             XCTFail()
             return
@@ -139,5 +139,17 @@ final class JSONTreeTests: XCTestCase {
         
         XCTAssertTrue(tree.contains("test"))
         XCTAssertEqual(root.children, [node1, node2])
+    }
+    
+    func testTest2() {
+        let packageURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
+        let fileURL = packageURL.appendingPathComponent("JSON/Test2.json")
+        guard let data = try? Data(contentsOf: fileURL) else {
+            XCTFail()
+            return
+        }
+        self.testData = data
+        guard let json = try? JSON(data: self.testData) else { XCTFail(); return; }
+        print(json.treeFormat)
     }
 }

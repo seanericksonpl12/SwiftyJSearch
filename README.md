@@ -101,6 +101,7 @@ print(json.treeFormat)
 
 Console Output:
 
+```swift
 └── car types
         ├── #
         │   ├── brand
@@ -120,6 +121,7 @@ Console Output:
                 │       └── Cherokee
                 └── gasoline
                     └── true
+```
 
 To increase readability, '#' nodes represent dictionaries with more than a single key
 

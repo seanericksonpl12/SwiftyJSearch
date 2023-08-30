@@ -1,0 +1,25 @@
+[
+    {
+        "car types": [
+            {
+                "brand": "Chevy",
+                "gasoline": true,
+                "models": [
+                    "Camaro",
+                    "Corvette",
+                    "Silverado",
+                    "Suburban"
+                ]
+            },
+            {
+                "my own car": {
+                    "brand": "Jeep",
+                    "gasoline": true,
+                    "model" : [
+                        "Cherokee"
+                    ]
+                }
+            }
+        ]
+    }
+]
