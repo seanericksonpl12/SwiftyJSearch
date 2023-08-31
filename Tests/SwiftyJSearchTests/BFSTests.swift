@@ -11,7 +11,7 @@ final class BFSTests: XCTestCase {
         super.setUp()
         continueAfterFailure = false
         let packageURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
-        let fileURL = packageURL.appendingPathComponent("JSON/Test1")
+        let fileURL = packageURL.appendingPathComponent("JSON/Test1.json")
         guard let data = try? Data(contentsOf: fileURL) else {
             XCTFail()
             return
@@ -21,7 +21,6 @@ final class BFSTests: XCTestCase {
     
     func testSetup() {
         let json = try? JSON(data: self.testData)
-        print(json!.description)
         XCTAssertNotNil(json)
     }
     

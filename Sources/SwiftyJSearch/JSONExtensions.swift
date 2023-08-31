@@ -130,9 +130,9 @@ public extension JSON {
     ///
     /// - Returns: A string to JSON array dictionary of each found key matching to its corresponding array of JSON values
     func bfs(for keys: [String],
-                    excluding: [String] = [],
-                    returning: SearchOptions = .all,
-                    maxDepth: Int? = nil) -> [String : [JSON]] {
+             excluding: [String] = [],
+             returning: SearchOptions = .all,
+             maxDepth: Int? = nil) -> [String : [JSON]] {
         self.bfs(keys: keys, excluding: excluding, returning: returning, maxDepth: maxDepth)
     }
     
@@ -148,17 +148,17 @@ public extension JSON {
     ///
     /// - Returns: Array of the JSON values of the found key, or an empty array if the key is not found
     func bfs(for key: String,
-                    excluding: [String] = [],
-                    returning: SearchOptions = .all,
-                    maxDepth: Int? = nil) -> [JSON] {
+             excluding: [String] = [],
+             returning: SearchOptions = .all,
+             maxDepth: Int? = nil) -> [JSON] {
         self.bfs(keys: [key], excluding: excluding, returning: returning, maxDepth: maxDepth).values.first ?? []
     }
     
     /// Private worker function to do the search
     private func bfs(keys: [String],
-                         excluding: [String],
-                         returning: SearchOptions,
-                         maxDepth: Int?) -> [String : [JSON]] {
+                     excluding: [String],
+                     returning: SearchOptions,
+                     maxDepth: Int?) -> [String : [JSON]] {
         
         var rtrnDict = [String: [JSON]]()
         var queue: [JSON] = []

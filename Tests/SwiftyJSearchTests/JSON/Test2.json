@@ -1,0 +1,27 @@
+[
+    {
+        "car types": [
+            {
+                "brand": "Chevy",
+                "gasoline": true,
+                "models": [
+                    "Camaro",
+                    "Corvette",
+                    "Silverado",
+                    "Suburban"
+                ]
+            },
+            {
+                "my own car": {
+                    "miles": 91242,
+                    "gasoline": true,
+                    "parts" : [
+                        "steering wheel",
+                        "brake pads",
+                        "chassis"
+                    ]
+                }
+            }
+        ]
+    }
+]

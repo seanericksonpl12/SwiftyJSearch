@@ -33,7 +33,7 @@ public struct JSONTree {
     
     /// Initializes a tree with an empty root node
     init() {
-        self.root = Node(children: [], content: .null(NSNull()))
+        self.root = Node(children: [], content: .null)
         self._balanceFactor = 0.0
     }
     
@@ -103,7 +103,7 @@ public extension JSONTree {
         case bool(Bool)
         case string(String)
         case number(NSNumber)
-        case null(NSNull)
+        case null
         
         static func ==(lhs: ContentType, rhs: ContentType) -> Bool {
             switch lhs {
@@ -128,9 +128,9 @@ public extension JSONTree {
                 default:
                     return false
                 }
-            case .null(_):
+            case .null:
                 switch rhs {
-                case .null(_):
+                case .null:
                     return true
                 default:
                     return false
@@ -167,7 +167,7 @@ extension JSONTree {
                 return a.value.count > b.value.count
             })
             node.children.append(dictNode)
-            dictNode.children = Array(repeating: Node(children: [], content: .null(NSNull())), count: sortedDict.count)
+            dictNode.children = Array(repeating: Node(children: [], content: .null), count: sortedDict.count)
             var i = 0, j = sortedDict.count - 1
             var swtch = true
             
@@ -184,7 +184,7 @@ extension JSONTree {
                 buildTree(node: newNode, json: pair.value)
             }
         case .null:
-            node.children.append(Node(children: [], content: ContentType.null(NSNull())))
+            node.children.append(Node(children: [], content: ContentType.null))
             return
         case .unknown:
             return
@@ -212,7 +212,7 @@ extension JSONTree {
             currentString.append(str)
         case .number(let num):
             currentString.append(num.description)
-        case .null(_):
+        case .null:
             currentString.append("NULL")
         }
         currentString.append("\n")
@@ -273,8 +273,8 @@ public extension JSONTree {
                 if next.content == .string(string) { return next }
             case .number(let nSNumber):
                 if next.content == .number(nSNumber) { return next }
-            case .null(let nSNull):
-                if next.content == .null(nSNull) { return next }
+            case .null:
+                if next.content == .null { return next }
             }
         }
         return nil
