@@ -57,7 +57,7 @@ final class JSONTreeTests: XCTestCase {
         let node1 = JSONTree.Node(children: [], content: .bool(true))
         let node2 = JSONTree.Node(children: [], content: .string("test"))
         let node3 = JSONTree.Node(children: [], content: .number(25))
-        let node4 = JSONTree.Node(children: [], content: .null(NSNull()))
+        let node4 = JSONTree.Node(children: [], content: .null)
         let node5 = JSONTree.Node(children: [], content: .string("test child"))
         
         root.children.append(node1)
@@ -84,7 +84,7 @@ final class JSONTreeTests: XCTestCase {
         let node1 = JSONTree.Node(children: [], content: .bool(true))
         let node2 = JSONTree.Node(children: [], content: .string("test"))
         let node3 = JSONTree.Node(children: [], content: .number(25))
-        let node4 = JSONTree.Node(children: [], content: .null(NSNull()))
+        let node4 = JSONTree.Node(children: [], content: .null)
         let node5 = JSONTree.Node(children: [], content: .string("test child"))
         
         root.children.append(node1)
@@ -103,7 +103,7 @@ final class JSONTreeTests: XCTestCase {
         let node1 = JSONTree.Node(children: [], content: .bool(true))
         let node2 = JSONTree.Node(children: [], content: .string("test"))
         let node3 = JSONTree.Node(children: [], content: .number(25))
-        let node4 = JSONTree.Node(children: [], content: .null(NSNull()))
+        let node4 = JSONTree.Node(children: [], content: .null)
         let node5 = JSONTree.Node(children: [], content: .string("test child"))
         let node6 = JSONTree.Node(children: [], content: .string("test"))
         
@@ -128,7 +128,7 @@ final class JSONTreeTests: XCTestCase {
         let node1 = JSONTree.Node(children: [], content: .bool(true))
         let node2 = JSONTree.Node(children: [], content: .string("test"))
         let node3 = JSONTree.Node(children: [], content: .number(25))
-        let node4 = JSONTree.Node(children: [], content: .null(NSNull()))
+        let node4 = JSONTree.Node(children: [], content: .null)
         let node5 = JSONTree.Node(children: [], content: .string("test child"))
         
         root.children.append(node1)
@@ -151,5 +151,16 @@ final class JSONTreeTests: XCTestCase {
         self.testData = data
         guard let json = try? JSON(data: self.testData) else { XCTFail(); return; }
         print(json.treeFormat)
+        let values = json.bfs(for: "my own car")
+        print(values[0].treeFormat)
+        let valueDictionary = json.bfs(for: ["models", "parts"])
+        if let parts = valueDictionary["parts"]?.first, let models = valueDictionary["models"]?.first {
+            print(parts.treeFormat)
+            print(models.treeFormat)
+        }
+        
+        let tree = JSONTree(json: json)
+        tree.removeAll(where: { $0.content == .string("parts") || $0.content == .number(91242)})
+        print(tree.prettyFormat)
     }
 }

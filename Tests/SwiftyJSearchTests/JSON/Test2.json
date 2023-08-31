@@ -13,10 +13,12 @@
             },
             {
                 "my own car": {
-                    "brand": "Jeep",
+                    "miles": 91242,
                     "gasoline": true,
-                    "model" : [
-                        "Cherokee"
+                    "parts" : [
+                        "steering wheel",
+                        "brake pads",
+                        "chassis"
                     ]
                 }
             }

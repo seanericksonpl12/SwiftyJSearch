@@ -7,7 +7,14 @@ SwiftyJSearch extends the functionality of SwiftyJSON with JSON search functiona
 3. [Integration](#integration)
 4. [Usage](#usage)
     - [SwiftyJSON Extensions](#swiftyjson-extensions)
+        * [Tree Format](#tree-format)
+        * [Breadth First Search](#breadth-first-search)
     - [JSONTree](#jsontree)
+        * [Initialization](#initialization)
+        * [Content Types](#content-types)
+        * [Pretty Format](#pretty-format)
+        * [Search](#search)
+        * [Modify](#modify)
 5. [Metadata](#metadata)
 
 ## SwiftyJSON
@@ -57,11 +64,11 @@ import SwiftyJSearch
 ```swift
 let json = JSON(data: someData)
 ```
-*For all JSON object usage info, check out [SwiftyJSON Docs](https://github.com/SwiftyJSON/SwiftyJSON#usage) *
+For all JSON object usage info, check out [SwiftyJSON Docs](https://github.com/SwiftyJSON/SwiftyJSON#usage)
 
 #### Tree Format
 
-Large JSON data can be difficult to read, especially when deeply nest. SwiftyJSearch makes reading JSON much easier with the treeFormat variable.
+Large JSON data can be difficult to read, especially when deeply nested. SwiftyJSearch makes reading JSON much easier with the treeFormat variable.
 
 Example JSON:
 
@@ -81,46 +88,49 @@ Example JSON:
             },
             {
                 "my own car": {
-                    "brand": "Jeep",
+                    "miles": 91242,
                     "gasoline": true,
-                    "model" : [
-                        "Cherokee"
+                    "parts" : [
+                        "steering wheel",
+                        "brake pads",
+                        "chassis"
                     ]
                 }
             }
         ]
     }
 ]
-
 ```
+
+
 
 ```swift
 let json = JSON(data: jsonDataFromAbove)
 print(json.treeFormat)
-```
 
-Console Output:
+// output:
 
-```swift
 └── car types
         ├── #
-        │   ├── brand
-        │   │   └── Chevy
+        │   ├── models
+        │   │       ├── Camaro
+        │   │       ├── Corvette
+        │   │       ├── Silverado
+        │   │       └── Suburban
         │   ├── gasoline
         │   │   └── true
-        │   └── models
-        │           ├── Camaro
-        │           ├── Corvette
-        │           ├── Silverado
-        │           └── Suburban
+        │   └── brand
+        │       └── Chevy
         └── my own car
             └── #
-                ├── brand
-                │   └── Jeep
-                ├── model
-                │       └── Cherokee
-                └── gasoline
-                    └── true
+                ├── miles
+                │   └── 91242
+                ├── gasoline
+                │   └── true
+                └── parts
+                        ├── steering wheel
+                        ├── brake pads
+                        └── chassis
 ```
 
 To increase readability, '#' nodes represent dictionaries with more than a single key
@@ -131,13 +141,159 @@ To increase readability, '#' nodes represent dictionaries with more than a singl
 
 ```swift
 let json = JSON(data: jsonDataFromAbove)
-let value = json.bfs("Bronco")
+let values = json.bfs(for: "my own car")
+print(values.first!.treeFormat)
+
+// output:
+
+#
+├── parts
+│       ├── steering wheel
+│       ├── brake pads
+│       └── chassis
+├── miles
+│   └── 91242
+└── gasoline
+    └── true
 ```
 
+Or search multiple keys with one search:
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let valueDictionary = json.bfs(for: ["models", "parts"])
+
+if let parts = valueDictionary["parts"]?.first, let models = valueDictionary["models"]?.first {
+    print(models.treeFormat)
+    print(parts.treeFormat)
+}
+
+// output:
+
+├── Camaro
+├── Corvette
+├── Silverado
+└── Suburban
+
+├── steering wheel
+├── brake pads
+└── chassis
+```
 
 ### JSONTree
 
+For an alternate way to store and manipulate JSON Data, you can use the JSONTree structure.  JSONTree is a basic tree data structure, but built around storing JSON data.
+
+#### Initialization
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let tree = JSONTree(json: json)
+```
+
+Or build it yourself:
+
+```swift
+let root = JSONTree.Node(children: [], content: .string("root"))
+let tree = JSONTree(root: root)
+```
+
+#### Content Types
+
+JSONTree nodes store values with the ```swift ContentType``` Enum.
+
+```swift
+ContentType values:
+    .string(String)
+    .number(NSNumber)
+    .bool(Bool)
+    .null
+```
+
+#### Pretty Format
+
+The JSONTree prettyFormat works the same as the JSON treeFormat:
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let tree = JSONTree(json: json)
+print(tree.prettyFormat)
+
+// output:
+
+└── car types
+        ├── #
+        │   ├── models
+        │   │       ├── Camaro
+        │   │       ├── Corvette
+        │   │       ├── Silverado
+        │   │       └── Suburban
+        │   ├── gasoline
+        │   │   └── true
+        │   └── brand
+        │       └── Chevy
+        └── my own car
+            └── #
+                ├── miles
+                │   └── 91242
+                ├── gasoline
+                │   └── true
+                └── parts
+                        ├── steering wheel
+                        ├── brake pads
+                        └── chassis
+```
+
+*JSONTree is autobalanced by sorting unordered dictionaries on init to improve search speed, so output between json.treeFormat and tree.prettyFormat may vary*
+
+#### Search
+
+Search for any data in the tree, similar to bfs with json objects, and get a reference to the tree node containing it:
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let tree = JSONTree(json: json)
+
+let node = tree.search(for: "chassis")
+node?.content = .string("radio")
+print(tree.prettyFormat)
+
+// output:
 ...
+    └── my own car
+        └── #
+            ├── miles
+            │   └── 91242
+            ├── gasoline
+            │   └── true
+            └── parts
+                    ├── steering wheel
+                    ├── brake pads
+                    └── radio
+```
+
+#### Modify
+
+Modify the json yourself by adding new children to nodes, or removing nodes with the provided functions:
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let tree = JSONTree(json: json)
+tree.removeAll(where: { $0.content == .string("parts") || $0.content == .number(91242)})
+print(tree.prettyFormat)
+
+// output:
+
+...
+    └── my own car
+        └── #
+            ├── miles
+            ├── gasoline
+            │   └── true
+            ├── steering wheel
+            ├── brake pads
+            └── chassis
+```
 
 ## Metadata
 Author - Sean Erickson
