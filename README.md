@@ -25,7 +25,10 @@ Checkout the project here: [SwiftyJSON](https://github.com/SwiftyJSON/SwiftyJSON
 
 ## Requirements
 
-....
+Previous OS versions and Xcode versions currently untested.
+Known working versions:
+- iOS 16.0+ | macOS 13.4+
+- Xcode 14
 
 ## Warning
 
@@ -200,7 +203,7 @@ let tree = JSONTree(root: root)
 
 #### Content Types
 
-JSONTree nodes store values with the ```swift ContentType``` Enum.
+JSONTree nodes store values with the `ContentType` Enum.
 
 ```swift
 ContentType values:
