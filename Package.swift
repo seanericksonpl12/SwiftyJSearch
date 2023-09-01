@@ -1,10 +1,11 @@
-// swift-tools-version: 5.8
+// swift-tools-version: 5.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "SwiftyJSearch",
+    platforms: [.iOS(.v13), .macOS(.v11)],
     products: [
         .library(
             name: "SwiftyJSearch",
@@ -22,6 +23,7 @@ let package = Package(
             name: "SwiftyJSearchTests",
             dependencies: ["SwiftyJSearch"],
             path: "Tests",
-            resources: [.copy("SwiftyJSearchTests/JSON/Test1")])
-    ]
+            resources: [.copy("SwiftyJSearchTests/JSON/Test1.json")])
+    ],
+    swiftLanguageVersions: [.v5]
 )
