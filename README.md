@@ -30,10 +30,6 @@ Changes made to the SwiftyJSON source code are listed in [SwiftyJSON Changes](#s
 - iOS 13.0+, macOS 10.13+
 - Xcode 14
 
-## Warning
-
-This package is not finished and currently in development, version will change and current usage will have unknown results.
-
 ## Integration
 
 #### Swift Package Manager
@@ -41,13 +37,13 @@ This package is not finished and currently in development, version will change a
 You can use [The Swift Package Manager](https://swift.org/package-manager) to install `SwiftyJSearch` by adding the proper description to your `Package.swift` file:
 
 ```swift
-// swift-tools-version:4.0
+// swift-tools-version:5.8
 import PackageDescription
 
 let package = Package(
     name: "YOUR_PROJECT_NAME",
     dependencies: [
-        .package(url: "https://github.com/seanericksonpl12/SwiftyJSearch.git", branch: "main"),
+        .package(url: "https://github.com/seanericksonpl12/SwiftyJSearch.git", from: "0.1.0"),
     ]
 )
 ```
