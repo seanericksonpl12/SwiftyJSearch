@@ -23,6 +23,8 @@ This package extends the use of SwiftyJSON, a JSON handling package for Swift.
 
 Checkout the project here: [SwiftyJSON](https://github.com/SwiftyJSON/SwiftyJSON)
 
+Changes made to the SwiftyJSON source code are listed in [SwiftyJSON Changes](#swiftyjson-changes)
+
 ## Requirements
 
 - iOS 13.0+, macOS 10.13+
@@ -295,6 +297,20 @@ print(tree.prettyFormat)
             └── chassis
 ```
 
+## SwiftyJSON Changes
+
+Due to a lack of updates in the SwiftyJSON project in recent years, this package contains the source code from SwiftyJSON with updated iOS/MacOS version support rather than linking it as a dependency.  All changes made to the original SwiftyJSON code are listed below.  
+
+All other functionality not listed below remain accurate to the original projects README.
+
+### Int8
+
+Int8 appears to no longer be a valid value for constructing an NSNumber (see [NSNumber](https://developer.apple.com/documentation/foundation/nsnumber)).  As such, `int8` and `int8Value` have been removed as `JSON` variables.  `uInt8` is still valid and available.
+
 ## Metadata
-Author - Sean Erickson
+
+SwiftyJSON - [SwiftyJSON](https://github.com/SwiftyJSON/SwiftyJSON)
+SwiftyJSON Authors - [lingoer](https://github.com/lingoer), [wongzigii](https://github.com/wongzigii), [Luke Tang](https://github.com/LukeTangPL)
+
+SwiftyJSearch Author - Sean Erickson
 seanericksonpl12@gmail.com
