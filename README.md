@@ -25,9 +25,7 @@ Checkout the project here: [SwiftyJSON](https://github.com/SwiftyJSON/SwiftyJSON
 
 ## Requirements
 
-Previous OS versions and Xcode versions currently untested.
-Known working versions:
-- iOS 16.0+ | macOS 13.4+
+- iOS 13.0+, macOS 10.13+
 - Xcode 14
 
 ## Warning
@@ -60,14 +58,13 @@ Then run `swift build` whenever you get prepared.
 #### SwiftyJSON Initialization
 
 ```swift
-import SwiftyJSON
 import SwiftyJSearch
 ```
 
 ```swift
 let json = JSON(data: someData)
 ```
-For all JSON object usage info, check out [SwiftyJSON Docs](https://github.com/SwiftyJSON/SwiftyJSON#usage)
+For all JSON object usage info, check out the [SwiftyJSON Docs](https://github.com/SwiftyJSON/SwiftyJSON#usage)
 
 #### Tree Format
 

@@ -1,7 +1,6 @@
 //
 //  JSONTree.swift
 //
-//  Created by Sean Erickson on 8/28/23.
 //  Copyright (c) 2023 Sean Erickson
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +21,6 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import SwiftyJSON
 import Foundation
 
 // MARK: - Public Struct and Inits

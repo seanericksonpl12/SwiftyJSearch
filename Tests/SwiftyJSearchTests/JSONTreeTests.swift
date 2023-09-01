@@ -6,7 +6,6 @@
 //
 
 import XCTest
-import SwiftyJSON
 @testable import SwiftyJSearch
 final class JSONTreeTests: XCTestCase {
     
