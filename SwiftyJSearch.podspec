@@ -12,5 +12,5 @@ Pod::Spec.new do |s|
   s.source   = { :git => "https://github.com/seanericksonpl12/SwiftyJSearch.git", :tag => s.version }
   s.source_files = "Sources/SwiftyJSearch/*.swift"
   
-  s.dependency 'SwiftyJSON', '~> 4.3.0'
+  s.dependency 'SwiftyJSON', '~> 5.0.1'
 end
