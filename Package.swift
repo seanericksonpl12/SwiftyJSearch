@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftyJSearch",
-    platforms: [.iOS(.v13), .macOS(.v10_13)],
+    platforms: [.iOS(.v8), .macOS(.v10_10)],
     products: [
         .library(
             name: "SwiftyJSearch",
