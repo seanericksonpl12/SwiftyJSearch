@@ -7,10 +7,10 @@ Pod::Spec.new do |s|
   s.author      = { "Sean" => "seanericksonpl12@gmail.com" }
 
   s.swift_version = "5.0"
-  s.osx.deployment_target = "10.9"
-  s.ios.deployment_target = "8.0"
+  s.osx.deployment_target = "10.13"
+  s.ios.deployment_target = "11.0"
   s.source   = { :git => "https://github.com/seanericksonpl12/SwiftyJSearch.git", :tag => s.version }
   s.source_files = "Sources/SwiftyJSearch/*.swift"
   
-  s.dependency 'SwiftyJSON', "~> 4.3.0"
+  s.dependency 'SwiftyJSON', '~> 4.3.0'
 end
