@@ -5,19 +5,15 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftyJSearch",
-    platforms: [.iOS(.v11), .macOS(.v10_13)],
+    platforms: [.iOS(.v13), .macOS(.v10_13)],
     products: [
         .library(
             name: "SwiftyJSearch",
             targets: ["SwiftyJSearch"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.0")
-    ],
     targets: [
         .target(
             name: "SwiftyJSearch",
-            dependencies: ["SwiftyJSON"],
             path: "Sources"),
         .testTarget(
             name: "SwiftyJSearchTests",

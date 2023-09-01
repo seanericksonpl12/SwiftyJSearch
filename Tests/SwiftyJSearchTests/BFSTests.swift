@@ -1,5 +1,4 @@
 import XCTest
-import SwiftyJSON
 @testable import SwiftyJSearch
 
 @available(macOS 13.0, *)
