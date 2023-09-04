@@ -438,3 +438,53 @@ public extension JSONTree {
         toRemove.forEach {let _ = self._remove(node: $0.0, parent: $0.1) }
     }
 }
+
+
+// MARK: - Convert to JSON
+extension JSONTree {
+    
+    /// Internal for now until polished
+    internal func convertToJSON() -> JSON {
+        buildJSON(node: self.root, json: JSON())
+    }
+    
+    private func buildJSON(node: Node, json: JSON) -> JSON {
+        if node.children.isEmpty {
+            switch node.content {
+            case .bool(let bool):
+                return JSON(booleanLiteral: bool)
+            case .string(let str):
+                return JSON(stringLiteral: str)
+            case .number(let num):
+                return JSON(floatLiteral: FloatLiteralType(truncating: num))
+            case .null:
+                return JSON(rawValue: NSNull()) ?? JSON()
+            }
+        }
+        else if node.isDictionary {
+            var dictionary: [String : Any] = [:]
+            node.children.forEach {
+                switch $0.content {
+                case .bool(_):
+                    break
+                case .string(let str):
+                    if $0.children.count == 1 {
+                        dictionary[str] = buildJSON(node: $0.children.first!, json: json)
+                    } else {
+                        dictionary[str] = buildJSON(node: $0, json: json)
+                    }
+                case .number(_):
+                    break
+                case .null:
+                    break
+                    
+                }
+            }
+            return JSON(dictionary)
+        } else {
+            var arr: [JSON] = []
+            node.children.forEach { arr.append(buildJSON(node: $0, json: json)) }
+            return JSON(arr)
+        }
+    }
+}

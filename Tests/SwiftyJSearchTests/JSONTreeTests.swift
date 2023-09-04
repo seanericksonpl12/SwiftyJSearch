@@ -140,6 +140,26 @@ final class JSONTreeTests: XCTestCase {
         XCTAssertEqual(root.children, [node1, node2])
     }
     
+    func testConvertToJSON() {
+        let root = JSONTree.Node(children: [], content: .string("root"))
+        let tree = JSONTree(root: root)
+        let node1 = JSONTree.Node(children: [], content: .bool(true))
+        let node2 = JSONTree.Node(children: [], content: .string("test"))
+        let node3 = JSONTree.Node(children: [], content: .number(25))
+        let node4 = JSONTree.Node(children: [], content: .null)
+        let node5 = JSONTree.Node(children: [], content: .string("test child"))
+        
+        root.children.append(node1)
+        root.children.append(node2)
+        node1.children.append(node3)
+        node1.children.append(node4)
+        node2.children.append(node5)
+        
+        let json = tree.convertToJSON()
+        print(tree.prettyFormat)
+        print(json)
+    }
+    
     func testTest2() {
         let packageURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
         let fileURL = packageURL.appendingPathComponent("JSON/Test2.json")

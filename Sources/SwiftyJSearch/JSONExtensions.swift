@@ -49,7 +49,7 @@ extension JSON {
             currentString.append("\n")
         case .string:
             currentString.append(prefix)
-            currentString.append(child.stringValue)
+            currentString.append(child.stringValue.replacingOccurrences(of: "\n", with: "\n" + childPrefix))
             currentString.append("\n")
         case .bool:
             currentString.append(prefix)
@@ -202,3 +202,115 @@ public extension JSON {
     }
 }
 
+
+// MARK: - Depth First Search
+extension JSON {
+    
+    /// Depth First Search of a JSON object to find values for specific keys
+    ///
+    /// - Warning: JSON Dictionaries are unordered, using .first or .last may result in different values each function call if the found values are nested at the same depth
+    ///
+    /// - Parameters:
+    ///    - keys: The keys to search for
+    ///    - excluding: Optional keys to exclude in the search to improve performance
+    ///    - returning: Which matches to return - all of them, first, or last
+    ///    - maxDepth: The maximum depth of traversal during the search
+    ///
+    /// - Returns: A string to JSON array dictionary of each found key matching to its corresponding array of JSON values
+    func dfs(for keys: [String],
+             excluding: [String] = [],
+             returning: SearchOptions = .all,
+             maxDepth: Int? = nil) -> [String : [JSON]] {
+        var returnDict: [String : [JSON]] = [:]
+        self.dfs(keys: keys,
+                 excluding: excluding,
+                 returning: returning,
+                 maxDepth: maxDepth,
+                 json: self,
+                 returnDict: &returnDict)
+        return returnDict
+    }
+    
+    /// Depth First Search of a JSON object to find values for  a specific key
+    ///
+    /// - Warning: JSON Dictionaries are unordered, using .first or .last may result in different values each function call if there are multiple of the same key
+    ///
+    /// - Parameters:
+    ///    - key: The key to search for
+    ///    - excluding: Optional keys to exclude in the search to improve performance
+    ///    - returning: Which matches to return - all of them, first, or last
+    ///    - maxDepth: The maximum depth of traversal during the search
+    ///
+    /// - Returns: Array of the JSON values of the found key, or an empty array if the key is not found
+    func dfs(for key: String,
+             excluding: [String] = [],
+             returning: SearchOptions = .all,
+             maxDepth: Int? = nil) -> [JSON] {
+        var returnDict: [String : [JSON]] = [:]
+        self.dfs(keys: [key],
+                 excluding: excluding,
+                 returning: returning,
+                 maxDepth: maxDepth,
+                 json: self,
+                 returnDict: &returnDict)
+        return returnDict.values.first ?? []
+    }
+    
+    /// Recursive worker function to do the searching
+    private func dfs(keys: [String],
+                     excluding: [String] = [],
+                     returning: SearchOptions = .all,
+                     maxDepth: Int? = nil,
+                     json: JSON,
+                     returnDict: inout [String : [JSON]]) {
+        
+        switch json.type {
+        case .number:
+            return
+        case .string:
+            return
+        case .bool:
+            return
+        case .array:
+            json.arrayValue.forEach {
+                dfs(keys: keys,
+                    excluding: excluding,
+                    returning: returning,
+                    maxDepth: maxDepth,
+                    json: $0,
+                    returnDict: &returnDict)
+            }
+        case .dictionary:
+            let dict = json.dictionaryValue
+            for (key, value) in dict {
+                if excluding.contains(key) { continue }
+                if keys.contains(key) {
+                    switch returning {
+                    case .all:
+                        if returnDict[key] == nil {
+                            returnDict[key] = [value]
+                        } else {
+                            returnDict[key]?.append(value)
+                        }
+                    case .first:
+                        if returnDict[key] == nil {
+                            returnDict[key] = [value]
+                        }
+                    case .last:
+                        returnDict[key] = [value]
+                    }
+                }
+                dfs(keys: keys,
+                    excluding: excluding,
+                    returning: returning,
+                    maxDepth: maxDepth,
+                    json: value,
+                    returnDict: &returnDict)
+            }
+        case .null:
+            return
+        case .unknown:
+            return
+        }
+    }
+}
