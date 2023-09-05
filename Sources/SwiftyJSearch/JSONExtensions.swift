@@ -21,6 +21,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+import Foundation
+
 extension JSON {
     
     /// A tree-style string representation of the JSON, similar in style to the linux 'tree' command.  '#' denotes a dictionary.
@@ -203,7 +205,7 @@ public extension JSON {
 }
 
 
-// MARK: - Depth First Search
+// MARK: - DFS
 extension JSON {
     
     /// Depth First Search of a JSON object to find values for specific keys
@@ -265,11 +267,7 @@ extension JSON {
                      returnDict: inout [String : [JSON]]) {
         
         switch json.type {
-        case .number:
-            return
-        case .string:
-            return
-        case .bool:
+        case .number, .string, .bool, .null, .unknown:
             return
         case .array:
             json.arrayValue.forEach {
@@ -307,8 +305,100 @@ extension JSON {
                     json: value,
                     returnDict: &returnDict)
             }
+        }
+    }
+}
+
+
+// MARK: - Path
+extension JSON {
+    
+    /// Return the path through the JSON to a given value if it exists
+    /// - Parameters:
+    ///    - to: The value to return the path for
+    ///
+    /// - Returns: A String representing the path to the given value if it exists, else nil
+    public func path(to value: String) -> String? {
+        var finalPath: String? = nil
+        runPathFinder(value: .string(value), json: self, path: "", finalPath: &finalPath)
+        return finalPath
+    }
+    
+    /// Return the path through the JSON to a given value if it exists
+    /// - Parameters:
+    ///    - to: The value to return the path for
+    ///
+    /// - Returns: A String representing the path to the given value if it exists, else nil
+    public func path(to value: Int) -> String? {
+        var finalPath: String? = nil
+        runPathFinder(value: .number(value as NSNumber), json: self, path: "", finalPath: &finalPath)
+        return finalPath
+    }
+    
+    /// Return the path through the JSON to a given value if it exists
+    /// - Parameters:
+    ///    - to: The value to return the path for
+    ///
+    /// - Returns: A String representing the path to the given value if it exists, else nil
+    public func path(to value: Float) -> String? {
+        var finalPath: String? = nil
+        print("value: \(value as NSNumber)")
+        runPathFinder(value: .number(value as NSNumber), json: self, path: "", finalPath: &finalPath)
+        return finalPath
+    }
+    
+    /// Return the path through the JSON to a given value if it exists
+    /// - Parameters:
+    ///    - to: The value to return the path for
+    ///
+    /// - Returns: A String representing the path to the given value if it exists, else nil
+    public func path(to value: Bool) -> String? {
+        var finalPath: String? = nil
+        runPathFinder(value: .bool(value), json: self, path: "", finalPath: &finalPath)
+        return finalPath
+    }
+    
+    /// Return the path through the JSON to the first null value if it exists
+    ///
+    /// - Returns: A String representing the path to the null value if it exists, else nil
+    public func pathToNull() -> String? {
+        var finalPath: String? = nil
+        runPathFinder(value: .null, json: self, path: "", finalPath: &finalPath)
+        return finalPath
+    }
+    
+    /// Private recursive helper to build the path
+    private func runPathFinder(value: JSONTree.ContentType, json: JSON, path: String, finalPath: inout String?) {
+        switch json.type {
+        case .number:
+            if case let .number(nSNumber) = value, nSNumber.floatValue == json.numberValue.floatValue {
+                finalPath = path + nSNumber.stringValue
+            }
+        case .string:
+            if case let .string(string) = value, string == json.stringValue {
+                finalPath = path + string
+            }
+        case .bool:
+            if case let .bool(bool) = value, bool == json.boolValue {
+                finalPath = path + bool.description
+            }
         case .null:
-            return
+            if value == .null {
+                finalPath = path + "null"
+            }
+        case .array:
+            for j in json.arrayValue {
+                runPathFinder(value: value, json: j, path: (path + "[...] -> "), finalPath: &finalPath)
+            }
+        case .dictionary:
+            let dict = json.dictionaryValue
+            if case let .string(string) = value, dict.keys.contains(string) {
+                finalPath = path + string
+                return
+            }
+            for (x, y) in dict {
+                runPathFinder(value: value, json: y, path: path + x + " : ", finalPath: &finalPath)
+            }
         case .unknown:
             return
         }
