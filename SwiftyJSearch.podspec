@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name        = "SwiftyJSearch"
-  s.version     = "0.1.2"
+  s.version     = "1.0.0"
   s.summary     = "Extend SwiftyJSON functionality with searching and better debug formatting!"
   s.homepage    = "https://github.com/seanericksonpl12/SwiftyJSearch"
   s.license     = { :type => "MIT", :file => 'LICENSE' }
