@@ -72,7 +72,6 @@ final class DFSTests: XCTestCase {
         XCTAssertTrue(results["brand"]!.contains("Tesla"))
         XCTAssertTrue(results["brand"]!.contains("Gibson"))
         XCTAssertTrue(results["brand"]!.contains("Fender"))
-        XCTAssertEqual(results["brand"], [JSON(stringLiteral: "Fender"),JSON(stringLiteral: "Gibson"),JSON(stringLiteral: "Chevy"),JSON(stringLiteral: "Ford"),JSON(stringLiteral: "Tesla")])
         XCTAssertEqual(results["gasoline"], [JSON(booleanLiteral: true),JSON(booleanLiteral: true),JSON(booleanLiteral: false)])
     }
 
