@@ -64,14 +64,6 @@ target 'MyApp' do
 end
 ```
 
-#### Carthage
-
-You can use [Carthage](https://github.com/Carthage/Carthage) to install `SwiftyJSON` by adding it to your `Cartfile`:
-
-```
-github "seanericksonpl12/SwiftyJSearch" ~> 1.0
-```
-
 ## Usage
 
 ### SwiftyJSON Extensions
