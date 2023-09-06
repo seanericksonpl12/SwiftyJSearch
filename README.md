@@ -9,6 +9,8 @@ SwiftyJSearch extends the functionality of SwiftyJSON with JSON search functiona
     - [SwiftyJSON Extensions](#swiftyjson-extensions)
         * [Tree Format](#tree-format)
         * [Breadth First Search](#breadth-first-search)
+        * [Depth First Search](#depth-first-search)
+        * [Path](#path)
     - [JSONTree](#jsontree)
         * [Initialization](#initialization)
         * [Content Types](#content-types)
@@ -43,17 +45,38 @@ import PackageDescription
 let package = Package(
     name: "YOUR_PROJECT_NAME",
     dependencies: [
-        .package(url: "https://github.com/seanericksonpl12/SwiftyJSearch.git", from: "0.1.0"),
+        .package(url: "https://github.com/seanericksonpl12/SwiftyJSearch.git", from: "1.0.0"),
     ]
 )
 ```
 Then run `swift build` whenever you get prepared.
 
+#### CocoaPods
+
+You can use [CocoaPods](https://cocoapods.org) to install `SwiftyJSearch` by adding it to your `Podfile`:
+
+```ruby
+platform :ios, '13.0'
+use_frameworks!
+
+target 'MyApp' do
+    pod 'SwiftyJSON', :git => 'https://github.com/seanericksonpl12/SwiftyJSearch.git'
+end
+```
+
+#### Carthage
+
+You can use [Carthage](https://github.com/Carthage/Carthage) to install `SwiftyJSON` by adding it to your `Cartfile`:
+
+```
+github "seanericksonpl12/SwiftyJSearch" ~> 1.0
+```
+
 ## Usage
 
 ### SwiftyJSON Extensions
 
-#### SwiftyJSON Initialization
+#### Initialization
 
 ```swift
 import SwiftyJSearch
@@ -176,6 +199,41 @@ if let parts = valueDictionary["parts"]?.first, let models = valueDictionary["mo
 ├── steering wheel
 ├── brake pads
 └── chassis
+```
+
+#### Depth First Search
+
+Works the same as above, only running the search depth - first.
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let values = json.dfs(for: "my own car")
+print(values.first!.treeFormat)
+
+// output:
+
+#
+├── parts
+│       ├── steering wheel
+│       ├── brake pads
+│       └── chassis
+├── miles
+│   └── 91242
+└── gasoline
+    └── true
+```
+
+#### Path
+
+Print out the direct path through the json to a specific key or value.
+
+```swift
+let json = JSON(data: jsonDataFromAbove)
+let path = json.path(to: "steering wheel")
+print(path)
+
+// output:
+[...] -> car types : [...] -> my own car : parts : [...] -> steering wheel
 ```
 
 ### JSONTree
