@@ -10,7 +10,7 @@ SwiftyJSearch extends the functionality of SwiftyJSON with JSON search functiona
         * [Tree Format](#tree-format)
         * [Breadth First Search](#breadth-first-search)
         * [Depth First Search](#depth-first-search)
-        # [Path](#path)
+        * [Path](#path)
     - [JSONTree](#jsontree)
         * [Initialization](#initialization)
         * [Content Types](#content-types)
